@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Stats Roblox</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="title">Statistiques Roblox</h1>
+    <div class="card info-card">
+        <p><b>Nom du jeu :</b> <span id="name">Chargement...</span></p>
+        <p><b>Joueurs actifs :</b> <span id="playing">Chargement...</span></p>
+        <p><b>Visites :</b> <span id="visits">Chargement...</span></p>
+        <p><b>Favoris :</b> <span id="favorites">Chargement...</span></p>
+    </div>
+
+    <div class="card">
+        <h2>Joueurs actifs (historique)</h2>
+        <canvas id="playersChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Visites (historique)</h2>
+        <canvas id="visitsChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Favoris (historique)</h2>
+        <canvas id="favoritesChart"></canvas>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+</body>
+</html>
