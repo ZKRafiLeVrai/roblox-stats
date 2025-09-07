@@ -1,34 +1,53 @@
-const gameId = "8263709207"; // Universe ID
+const universeId = "8263709207"; // id du jeu Roblox
 
-fetch(`/stats/${gameId}`)
-.then(res => res.json())
-.then(data => {
-    const current = data.current;
-    const history = data.history;
+fetch(`/stats/${universeId}`)
+  .then(res => res.json())
+  .then(data => {
+    console.log("Réponse API :", data); // Debug
 
-    document.getElementById("name").innerText = current.name;
-    document.getElementById("playing").innerText = current.playing;
-    document.getElementById("visits").innerText = current.visits;
-    document.getElementById("favorites").innerText = current.favoritedCount;
+    // Vérification si l'API renvoie bien les stats
+    if (data && !data.error && data.name) {
+      document.getElementById("game-name").textContent = data.name || "Nom indisponible";
+      document.getElementById("visits").textContent = data.visits?.toLocaleString() || "0";
+      document.getElementById("favorites").textContent = data.favorites?.toLocaleString() || "0";
+      document.getElementById("players").textContent = data.players?.toLocaleString() || "0";
 
-    const labels = history.map(e => e.date);
-    const playingData = history.map(e => e.playing);
-    const visitsData = history.map(e => e.visits);
-    const favoritesData = history.map(e => e.favorites);
-
-    new Chart(document.getElementById("playersChart"), {
-        type: 'line',
-        data: { labels, datasets:[{label:'Joueurs actifs', data: playingData, borderColor:'rgb(75,192,192)', fill:false}] }
-    });
-
-    new Chart(document.getElementById("visitsChart"), {
-        type: 'line',
-        data: { labels, datasets:[{label:'Visites', data: visitsData, borderColor:'rgb(192,75,192)', fill:false}] }
-    });
-
-    new Chart(document.getElementById("favoritesChart"), {
-        type: 'line',
-        data: { labels, datasets:[{label:'Favoris', data: favoritesData, borderColor:'rgb(192,192,75)', fill:false}] }
-    });
-})
-.catch(e => { console.error(e); alert("Impossible de charger les stats"); });
+      // Exemple graphique (visits vs favorites)
+      const ctx = document.getElementById("statsChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Visites", "Favoris", "Joueurs en ligne"],
+          datasets: [{
+            label: "Statistiques du jeu",
+            data: [data.visits, data.favorites, data.players],
+            backgroundColor: ["#4F46E5", "#06B6D4", "#22C55E"],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                color: "#333",
+                font: { size: 14 }
+              }
+            }
+          },
+          animation: {
+            duration: 1200,
+            easing: "easeOutBounce"
+          }
+        }
+      });
+    } else {
+      // Si pas de data correcte
+      document.getElementById("game-name").textContent = "❌ Impossible de charger les stats.";
+      console.warn("Pas de données valides :", data);
+    }
+  })
+  .catch(err => {
+    console.error("Erreur de récupération :", err);
+    document.getElementById("game-name").textContent = "⚠️ Erreur de chargement des stats.";
+  });
